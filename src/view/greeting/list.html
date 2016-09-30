@@ -1,0 +1,153 @@
+<html>
+    <head>
+        <title>A Simple Page with CKEditor</title>
+        <!-- Make sure the path to CKEditor is correct. -->
+        <script>
+        	var List = Array("{{ fieldNames|safeseq|join:"\", \"" }}");
+        </script>
+        <script src="/static/ckeditor/ckeditor.js"></script>
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+        <script>
+$(document).ready(function()
+{	
+	$(document).on("click", "#TestTemplate", function(){
+		var t = $(this).val();
+		var editor_data = CKEDITOR.instances.editor1.getData();
+		$.post( "/greeting/template", { table:"clientList", formData: editor_data  }, function( data ) {
+			$( ".result" ).html( data );
+		}, "text");
+	});
+});
+
+var Findemailcolumns = function (){
+	var column = $('.sample tr td').filter(function() {
+		var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+  			return pattern.test($(this).text());
+	}).index();
+	
+	if(column > -1) {
+		$('table tr').each(function() {
+			$(this).find('td').eq(column).css('background-color', '#eee');
+		});
+	}
+	
+	$('.sample tr th').filter(function() {
+		var tableName = $(this).parents("table").attr("id");
+		$('#'+tableName+"email").append($('<option/>', { 
+			value: $(this).index(),
+			text : $(this).find("input").val()
+		}));
+		$('#'+tableName+"email option:eq("+(column+1)+")").attr("selected", "selected");
+	})
+
+	
+}
+</script>
+    </head>
+    
+<body>
+<h1>Jason Test File</h1>
+
+{{details}}</br>
+{{b1}}
+
+<form>
+            <textarea name="editor1" id="editor1" rows="10" cols="80">
+               <!-- So that mobile webkit will display zoomed in --><!-- disable auto telephone linking in iOS --><!-- 100% wrapper (grey background) -->
+<table border="0" cellpadding="0" cellspacing="0" style="height:100%; width:100%">
+	<tbody>
+		<tr>
+			<td><!-- small print top text -->
+			<table border="0" cellpadding="0" cellspacing="0" style="width:100%">
+				<tbody>
+					<tr>
+						<td>Can&#39;t see this email? <a href="http://click.communicatormail.com/?ju=fe2916707163047a721176&amp;ls=fdbc1572726d027e7413717d62&amp;m=fef41275776c02&amp;l=fe9817787464057474&amp;s=fdf715727d61057471147776&amp;jb=ffcf14&amp;t=">Click here to open in your browser</a></td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- 600px container (Main Image Header Section) -->
+
+			<table border="0" cellpadding="0" cellspacing="0" style="width:600px">
+				<tbody>
+					<tr>
+						<td style="background-color:#ffffff"><a href="http://click.communicatormail.com/?ju=fe2816707163047a721177&amp;ls=fdbc1572726d027e7413717d62&amp;m=fef41275776c02&amp;l=fe9817787464057474&amp;s=fdf715727d61057471147776&amp;jb=ffcf14&amp;t="><img alt="[TEXT HERE]" src="http://mailers.communicatormail.com/KingSolomons/images/2incredibleoffers_600x220.jpg" style="width:100%" /> </a></td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- 600px container (white background) -->
+
+			<table border="0" cellpadding="0" cellspacing="0" style="width:600px">
+				<tbody>
+					<tr>
+						<td style="background-color:#ffffff"><br />
+						<!-- ### BEGIN CONTENT ### --></td>
+					</tr>
+					<tr>
+						<td style="background-color:#ffffff"><!-- username and date section --><!-- Copy Area --><!-- Copy Area -->
+						<table border="0" cellpadding="0" cellspacing="0" style="width:100%">
+							<tbody>
+								<tr>
+									<td style="text-align:left">
+									<p>Username: KSR46337442</p>
+
+									<p><strong>Hi </strong></p>
+
+									<p>&nbsp;</p>
+
+									<p>Match up and double up the thrill in !</p>
+
+									<p><strong>Well if you deposit now you&rsquo;ll get double your first deposit in bonus money to play the latest Pokies including;<em> Three Musketeers</em>, <em>Full Moon Fortune</em> and <em>Little Britain</em> as well as classics like </strong> <strong>and <em>Frankie Dettori</em>!</strong></p>
+
+									<p><a href="http://click.communicatormail.com/?ju=fe2716707163047a721178&amp;ls=fdbc1572726d027e7413717d62&amp;m=fef41275776c02&amp;l=fe9817787464057474&amp;s=fdf715727d61057471147776&amp;jb=ffcf14&amp;t=">Terms and Conditions</a></p>
+
+									<p>Remember you&rsquo;re also entitled to our special second deposit offer worth 200% of your deposit!</p>
+
+									<p>What are you waiting for? Get your winnings started now!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://click.communicatormail.com/?ju=fe2616707163047a721179&amp;ls=fdbc1572726d027e7413717d62&amp;m=fef41275776c02&amp;l=fe9817787464057474&amp;s=fdf715727d61057471147776&amp;jb=ffcf14&amp;t=">Download here</a></p>
+									<img alt="[TEXT HERE]" src="http://mailers.communicatormail.com/KingSolomons/images/signature2.jpg" />
+									<p><strong>The King Solomon Casino Team</strong></p>
+
+									<p>Can&#39;t remember your Password? <a href="http://click.communicatormail.com/?ju=fe2e16707163047a721270&amp;ls=fdbc1572726d027e7413717d62&amp;m=fef41275776c02&amp;l=fe9817787464057474&amp;s=fdf715727d61057471147776&amp;jb=ffcf14&amp;t=" target="_blank">Click Here</a></p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<!-- END Copy Area --><!-- do not remove this br --><br />
+						<!-- ### END CONTENT ### --></td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- Footer terms -->
+
+			<table>
+				<tbody>
+					<tr>
+						<td style="text-align:center">Copyright &copy;2014 King Solomons Casino All rights reserved. King Solomons is commited to supporting Responsible Gaming</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- END Footer terms --></td>
+		</tr>
+	</tbody>
+</table>
+<!--/100% wrapper-->
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><img src="http://click.communicatormail.com/open.aspx?ffcb10-fe511577706d01757113-fdbc1572726d027e7413717d62-fef41275776c02-fe9817787464057474-fdf715727d61057471147776-ffcf14" style="height:1px; width:1px" /></p>
+
+        
+            </textarea>
+            <script>
+                // Replace the <textarea id="editor1"> with a CKEditor
+                // instance, using default configuration.
+                CKEDITOR.replace( 'editor1' );
+            </script>
+            <input type="button" id="TestTemplate" value="test templete"/>
+        </form>
+        <div class="result"> </div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{application,redo,
+             [{description,"Pipelined Redis Erlang Driver"},
+              {vsn,"1.1.0"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {env,[]}]}.

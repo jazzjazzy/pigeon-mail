@@ -1,0 +1,5 @@
+{application,pmod_transform,
+             [{description,"Parameterized Modules"},
+              {vsn,git},
+              {modules,[pmod_pt]},
+              {applications,[kernel,stdlib]}]}.

@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<link href="http://hayageek.github.io/jQuery-Upload-File/uploadfile.min.css" rel="stylesheet">
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="http://hayageek.github.io/jQuery-Upload-File/jquery.uploadfile.min.js"></script>
+</head>
+<script>
+$(document).ready(function()
+{	
+	var column = $('.sample tr td').filter(function() {
+		var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+  			return pattern.test($(this).text());
+	}).index();
+	
+	if(column > -1) {
+		$('table tr').each(function() {
+			$(this).find('td').eq(column).css('background-color', '#eee');
+		});
+	}
+	
+	$('.sample tr th').filter(function() {
+		var tableName = $(this).parents("table").attr("id");
+		$('#'+tableName+"email").append($('<option/>', { 
+			value: $(this).index(),
+			text : $(this).find("input").val()
+		}));
+		$('#'+tableName+"email option:eq("+(column+1)+")").attr("selected", "selected");
+	})
+
+	$("#fileuploader").uploadFile({
+	url:"/greeting/upload",
+	fileName:"myfile",
+	showProgress:"true",
+	returnType : "json",
+	onSuccess:function(files,data,xhr)
+	{	
+		var layout;
+		var count=1;
+
+		SheetsObj = data.Sheets;
+
+		$.each(SheetsObj, function(index, value){
+
+			layout += "<tr><td><input type=\"checkbox\" class=\"add-list\" name=\""+value.Name+"\" value=\""+value.Path+"\"></td>"+
+					   "<td><table id=\"setting\" width=\"200\" border=\"0\" id=\""+value.Sheet+"\">"+
+			           "   <tr>"+
+			           "     <td width=\"116\">First Row Is Title</td>"+
+			           "     <td width=\"68\"><input name=\"row\" class=\"FirstRow\" type=\"checkbox\" value=\"table"+count+"\"></td>"+
+			           "   </tr>"+
+			           "   <tr>"+
+			           "     <td>Email Column</td>"+
+			           "     <td>"+
+			           "       <select name=\"email"+count+"\" id=\"table"+count+"email\" class=\"emailcol\">"+
+			           "       	<option>Select</option>"+
+			           "     </select></td>"+
+			           "   </tr>"+
+			           " </table></td>"+
+					   "<td>File :"+value.File+", Sheet Name: "+value.Name+", Rows : "+value.Rows+" <br/ ><table class=\"sample\" id=\"table"+count+"\">"+value.Sample+"</table></td><tr>";
+			count++;
+		});
+		$('#rowstable').append(layout);
+		$('#rowsoutput').css("display","block");
+		Findemailcolumns();
+		
+	},
+	afterUploadAll:function()
+	{
+		
+	}
+	});
+	
+	$("#submitList").on("click", function(){
+		var Book = { book : new Object()};
+		var sheetsArray = new Object();
+		var preBook
+		
+		 $(".add-list").each( function(){
+			if($(this).is(":checked")){
+				var BookName = $(this).val().split("+|+");
+				
+				var tableDetails = $(this).parents("tr").find("td:nth-child(2)").find('table');
+				var tableSample = $(this).parents("tr").find("td:nth-child(3)").find('table');
+				
+				var count =0;
+				dataBlock = new Object();
+
+				$(tableSample).find("tr:visible:nth-child(1)").find("th").each(function(){
+					dataBlock[count] = $(this).find("input").val();
+					count++;
+				})
+				var objDetails = {
+					    Name : $(this).attr("name"),
+						FirstRow : $(tableDetails).find(".FirstRow").is(":checked"),
+						EmailCol : $(tableDetails).find(".emailcol option:selected").val(),
+						Headers : dataBlock}
+				
+				if(preBook != BookName[0]){
+					preBook = BookName[0];
+					sheetsArray = new Object();	
+					sheetsArray[BookName[1]] = objDetails ;
+				}else{
+					sheetsArray[BookName[1]] = objDetails ;
+				}
+				Book.book[BookName[0]] = sheetsArray;
+			}
+		});
+		$('#jsonField').val(JSON.stringify(Book));
+	})
+	
+	$(document).on("click", ".FirstRow", function(){
+		var t = $(this).val();
+		var table = $('table').find('#'+t);
+		
+		if ($(this).is(":checked")) {
+			table.find("tr:first").hide();
+			table.find("tr:nth-child(1)").each(function() {
+				$(this).find('td').each(function() {
+					var field = $(this).html().replace(/(["])/g, "&quot;");
+					$(this).replaceWith('<th>' +"<input rec=\""+field+"\" name=\""+t+"Field\" type=\"text\" value=\""+field+"\">"+ '</th>')
+				})
+			});
+		}else{
+			table.find("tr:visible:nth-child(1)").each(function() {
+				$(this).find('th').each(function() {
+					var field = $(this).find("input").attr("rec");
+					$(this).replaceWith('<td>' + field + '</td>'); 
+				})
+			});
+			table.find("tr:hidden:first").show();
+		}
+	});
+});
+
+var Findemailcolumns = function (){
+	var column = $('.sample tr td').filter(function() {
+		var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+  			return pattern.test($(this).text());
+	}).index();
+	
+	if(column > -1) {
+		$('table tr').each(function() {
+			$(this).find('td').eq(column).css('background-color', '#eee');
+		});
+	}
+	
+	$('.sample tr th').filter(function() {
+		var tableName = $(this).parents("table").attr("id");
+		$('#'+tableName+"email").append($('<option/>', { 
+			value: $(this).index(),
+			text : $(this).find("input").val()
+		}));
+		$('#'+tableName+"email option:eq("+(column+1)+")").attr("selected", "selected");
+	})
+
+	
+}
+</script>
+<style>
+#rowsoutput{
+	display:none;
+}
+#rowsoutput tr{
+	line-height:196px !important;
+}
+
+
+#setting tr{
+	line-height:19px !important;
+}
+
+table {
+	border-spacing: 0;
+    border-collapse: collapse;
+}
+table.sample td{
+	border-spacing: 0;
+    border-collapse: collapse;
+	padding: 5px 10px 2px 10px;
+	vertical-align: top;
+    border:solid black 1px; 
+    line-height:19px !important;
+}
+
+table#rowstable td{
+	border:solid black 1px; 
+	vertical-align: top;
+}
+</style>
+<body>
+<p>Upload File
+ <div id="fileuploader">Upload</div>
+</p>
+<p>Currenly accepted file type are</p>
+<table  class="sample" width="450" border="0">
+  <tr>
+    <td width="71">CSV</td>
+    <td width="363">Standards Comma Seperated List</td>
+  </tr>
+  <tr>
+    <td>XLS</td>
+    <td>Office 97, 2003 Excel </td>
+  </tr>
+  <tr>
+    <td>XLSX</td>
+    <td>Office Excel 2007 Excel file </td>
+  </tr>
+   <tr>
+    <td>SXC</td>
+    <td>openOffice Calc file</td>
+  </tr>
+   <tr>
+    <td>ODS</td>
+    <td>openOffice Calc file</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<div id="rowsoutput">
+<form method="post" action="/greeting/list">
+<table id= "rowstable" width="900">
+
+</table>
+<input type="submit" id="submitList" />
+<input type="hidden" name="ParseData" id="jsonField" value=""/>
+</form>
+</div>
+</body>
+</html>

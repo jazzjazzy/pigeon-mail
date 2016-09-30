@@ -1,0 +1,7 @@
+{application,erlmc,
+             [{description,"Erlang binary protocol memcached client"},
+              {vsn,"0.4"},
+              {modules,[]},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {env,[]}]}.

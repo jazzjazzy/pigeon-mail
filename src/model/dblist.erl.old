@@ -1,0 +1,38 @@
+%% @author jason
+%% @doc @todo Add description to dblist.
+
+
+-module(dblist).
+-compile(export_all).
+-include_lib("stdlib/include/qlc.hrl"). 
+-record(emailList, {id,name,state,email}).
+%% ====================================================================
+%% API functions
+%% ====================================================================
+
+init()->
+	mnesia:create_schema([node()]),
+	mnesia:start(),
+	mnesia:create_table(emailList,
+                        [{attributes, record_info(fields, emailList)}, {record_name, emailList}]).
+
+insert(Id, State, Name , Email) -> 
+	%#emailList{id = Id,name = Name, state= State, email=Email},
+ 	%emailList.
+	Fun =  fun() -> mnesia:write(#emailList{id = Id,name = Name, state= State, email=Email}) end,
+	mnesia:activity(transaction, Fun).
+
+
+getByIndex(Index)->
+		F = fun() ->
+               mnesia:read(emailList, Index, read)
+        end,
+    	mnesia:transaction(F).
+
+select_all(Table) -> 
+    mnesia:transaction( 
+    fun() ->
+        qlc:eval( qlc:q(
+            [ X || X <- mnesia:table(Table) ] 
+        )) 
+    end ).

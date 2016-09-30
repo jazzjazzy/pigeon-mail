@@ -1,0 +1,3 @@
+-module(emailList, [Id, Email, Name, State]).
+-compile(export_all).
+

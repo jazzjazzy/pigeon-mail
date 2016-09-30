@@ -1,0 +1,2 @@
+-module(clientList, [Id, Listname, Email, Datablock]).
+-compile(export_all).

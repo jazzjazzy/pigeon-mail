@@ -1,0 +1,26 @@
+#cke_47_label{
+   display: inline;
+   border:1px solid black;
+   width:100%;
+}
+
+#cke_47 span.cke_button_label{
+   display: inline;
+}
+#cke_47 span.cke_button_icon{
+   width:0px;
+}
+#cke_47 span.cke_toolgroup{
+	border:0px;
+	background-color: transparent;
+}
+
+#cke_47 span.cke_button_label {
+    background: none repeat scroll 0 0 #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    float: left;
+    margin: 0 0px 0px 0px;
+    padding: 0 15px;
+}
+
